@@ -1,20 +1,33 @@
 from django.db import models
+from django.contrib.auth.hashers import check_password, make_password
 
 
 class User(models.Model):
     login = models.CharField(max_length=40, unique=True)
-    password = models.CharField(max_length=40)
-    lastLoginDate = models.DateTimeField(auto_now=True)
+    password = models.CharField(max_length=100)
+    last_login = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'user'
         ordering = ['-login']
 
+    def is_authenticated(self):
+        return True
+
+    def set_password(self, raw_password):
+        try:
+            self.password = make_password(raw_password)
+        except Exception as e:
+            raise e
+
+    def check_password(self, raw_password):
+        if check_password(raw_password, self.password):
+            return True
+        else:
+            return False
+
     def __str__(self):
         return self.login
-
-    #def set_password(self, password):
-
 
 
 class Post(models.Model):

@@ -6,7 +6,7 @@
 	<h1>All posts</h1>
     {% for post in posts %}
     	<h2>
-    		<a href="#">{{ post.title }}</a>
+    		<a href="{% url 'auth' %}">{{ post.title }}</a>
     	</h2>
     	<p class="date">
     		Published {{ post.createdDate }} by {{ post.author }}

@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import User, Post
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, LoginForm
+from django.contrib.auth import login
 
 
 def index(request):
@@ -14,7 +15,19 @@ def profile(request, id):
 
 
 def auth(request):
-    return render(request, "user/auth.html")
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = User.objects.get(login=cd['login'])
+
+            if user.check_password(cd['password']):
+                login(request, user)
+                return render(request, "post/index.html")
+    else:
+        form = LoginForm()
+
+    return render(request, "user/auth.html", {'form': form})
 
 
 def register(request):
@@ -22,7 +35,7 @@ def register(request):
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
             new_user = user_form.save(commit=False)
-            # new_user.set_password(user_form.cleaned_data['password'])
+            new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
 
             return render(request, 'user/auth.html', {'new_user': new_user})

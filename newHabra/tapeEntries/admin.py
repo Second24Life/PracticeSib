@@ -3,8 +3,8 @@ from .models import User, Post
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('login', 'lastLoginDate')
-    list_filter = ['lastLoginDate']
+    list_display = ('login', 'last_login')
+    list_filter = ['last_login']
     search_fields = ['login']
 
 
