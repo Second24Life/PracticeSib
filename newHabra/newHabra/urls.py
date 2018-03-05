@@ -1,4 +1,6 @@
 from tapeEntries import views
+from django.contrib import admin
+from django.urls import path
 
 """newHabra URL Configuration
 
@@ -15,15 +17,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.index),
-    path('profile/<int:id>/', views.profile),
-    path('auth/', views.auth),
-    path('register/', views.register),
-    path('add_post/', views.add_post),
-    path('edit_post/<int:id>/', views.edit_post)
+    path('admin/', admin.site.urls, name='admin'),
+    path('', views.index, name='index'),
+    path('profile/<int:id>/', views.profile, name='profile'),
+    path('auth/', views.auth, name='auth'),
+    path('register/', views.register, name='register'),
+    path('add_post/', views.add_post, name='add_post'),
+    path('edit_post/<int:id>/', views.edit_post, name='edit_post')
 ]
