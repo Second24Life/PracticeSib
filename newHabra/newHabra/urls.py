@@ -1,6 +1,7 @@
 from tapeEntries import views
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth import views as auth_views
 
 """newHabra URL Configuration
 
@@ -23,7 +24,9 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', views.index, name='index'),
     path('profile/<int:id>/', views.profile, name='profile'),
-    path('auth/', views.auth, name='auth'),
+    #path('auth/', views.auth, name='auth'),
+    path('auth/', auth_views.LoginView.as_view(template_name='user/auth.html'), name='auth'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
     path('add_post/', views.add_post, name='add_post'),
     path('edit_post/<int:id>/', views.edit_post, name='edit_post')

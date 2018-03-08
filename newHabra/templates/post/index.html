@@ -6,11 +6,11 @@
 	<h1>All posts</h1>
     {% for post in posts %}
     	<h2>
-    		<a href="{% url 'auth' %}">{{ post.title }}</a>
+    		<a href="#">{{ post.title }}</a>
     	</h2>
+        {{ post.body|truncatewords:30|linebreaks }}
     	<p class="date">
     		Published {{ post.createdDate }} by {{ post.author }}
     	</p>
-    	{{ post.body|truncatewords:30|linebreaks }}
     {% endfor %}
 {% endblock %}
