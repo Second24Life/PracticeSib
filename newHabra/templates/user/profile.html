@@ -3,18 +3,69 @@
 {% block title %}{{ user.username }}{% endblock %}
 
 {% block content %}
-  <h1>
-    {{ user.username }}
-  </h1>
-  <br>
-  <!--<h1>All posts</h1>
-    {% for post in posts %}
-      <h2>
-        <a href="#">{{ post.title }}</a>
-      </h2>
-        {{ post.body|truncatewords:30|linebreaks }}
-      <p class="date">
-        Published {{ post.createdDate }} by {{ post.author }}
-      </p>
-    {% endfor %}-->
+<div class="">
+	<div class="row">
+		<div class="col-4" style="border-right: 1px solid black">
+			<p>
+				<h1>Photo</h1>
+			</p>
+			<h1>Username: {{ user.username }}</h1>
+			<br>
+			<h3>BIO</h3>
+		</div>
+		<div class="col-8">
+			<h1>All posts</h1>
+			{% for post in posts %}
+			<h2>
+				<a href="#">{{ post.title }}</a>
+			</h2>
+			{{ post.body|truncatewords:30|linebreaks }}
+			<p class="date">
+				Published {{ post.createdDate }} by {{ post.author }}
+			</p>
+			{% endfor %}
+
+			{% if posts.has_other_pages %}
+			<nav aria-label="posts pagination" class="mb-4">
+				<ul class="pagination">
+					{% if posts.has_previous %}
+					<li class="page-item">
+						<a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a>
+					</li>
+					{% else %}
+					<li class="page-item disabled">
+						<span class="page-link">Previous</span>
+					</li>
+					{% endif %}
+
+					{% for page_num in posts.paginator.page_range %}
+					{% if posts.number == page_num %}
+					<li class="page-item active">
+						<span class="page-link">
+							{{ page_num }}
+							<span class="sr-only">(current)</span>
+						</span>
+					</li>
+					{% else %}
+					<li class="page-item">
+						<a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+					</li>
+					{% endif %}
+					{% endfor %}
+
+					{% if posts.has_next %}
+					<li class="page-item">
+						<a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+					</li>
+					{% else %}
+					<li class="page-item disabled">
+						<span class="page-link">Next</span>
+					</li>
+					{% endif %}
+				</ul>
+			</nav>
+			{% endif %}
+		</div>
+	</div>
+</div>
 {% endblock %}

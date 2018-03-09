@@ -36,7 +36,7 @@ class Post(models.Model):
     body = models.TextField(max_length=10000)
     author = models.ForeignKey(
         User, related_name='posts', null=True, on_delete=models.SET_NULL)
-    createdDate = models.DateField(auto_now_add=True)
+    createdDate = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'post'

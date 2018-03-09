@@ -1,21 +1,44 @@
 from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Post
-from .forms import UserRegistrationForm, LoginForm
-from django.contrib.auth import authenticate, login, logout
+from .forms import UserRegistrationForm  # , LoginForm
+# from django.contrib.auth import logout, authenticate, login,
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def index(request):
-    posts = Post.objects.all()
+    queryset = Post.objects.order_by('-createdDate')
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(queryset, 20)
+
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
     return render(request, "post/index.html", {'posts': posts})
 
 
 @login_required
 def profile(request, id):
     user = get_object_or_404(User, pk=id)
-    posts = Post.objects.filter(author==user)
+    queryset = user.posts.order_by('-createdDate')
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(queryset, 20)
+
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
     return render(request, 'user/profile.html', {'user': user, 'posts': posts})
 
 
@@ -51,7 +74,7 @@ def register(request):
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
 
-            return HttpResponsePermanentRedirect('/auth/') 
+            return HttpResponsePermanentRedirect('/auth/')
     else:
         user_form = UserRegistrationForm()
 
