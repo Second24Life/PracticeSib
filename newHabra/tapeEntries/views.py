@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Post
-from .forms import UserRegistrationForm  # , LoginForm
+from .forms import UserRegistrationForm, AddPostForm  # , LoginForm
 # from django.contrib.auth import logout, authenticate, login,
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -68,22 +68,39 @@ def profile(request, id):
 
 def register(request):
     if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-        if user_form.is_valid():
-            new_user = user_form.save(commit=False)
-            new_user.set_password(user_form.cleaned_data['password'])
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save(commit=False)
+            new_user.set_password(form.cleaned_data['password'])
             new_user.save()
 
             return HttpResponsePermanentRedirect('/auth/')
     else:
-        user_form = UserRegistrationForm()
+        form = UserRegistrationForm()
 
-    return render(request, "user/register.html", {'user_form': user_form})
+    return render(request, "user/register.html", {'form': form})
 
 
+@login_required
+def get_post(request, id):
+    post = get_object_or_404(Post, pk=id)
+    return render(request, 'post/post.html', {'post': post})
+
+
+@login_required
 def add_post(request):
-    return HttpResponse("<h2>Add_post</h2>")
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return render(request, 'post/post.html', {'post': post})
+    else:
+        form = AddPostForm()
+    return render(request, 'post/add_post.html', {'form': form})
 
 
+@login_required
 def edit_post(request, id):
     return HttpResponse("<h2>Edit_post {}</h2>".format(id))

@@ -7,11 +7,11 @@
     {% for post in posts %}
     	<div style="border: 0.5px solid black; width: 1000px">
             <h2>
-                <a href="#">{{ post.title }}</a>
+                <a href="{% url 'get_post' post.id %}">{{ post.title }}</a>
             </h2>
             {{ post.body|truncatewords:30|linebreaks }}
             <p class="date">
-                Published {{ post.createdDate }} by <a href="{% url 'auth' %}">{{ post.author }}</a>
+                Published {{ post.createdDate }} by <a href="{% url 'profile' post.author.id %}">{{ post.author }}</a>
             </p>
         </div>
     {% endfor %}
