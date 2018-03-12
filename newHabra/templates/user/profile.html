@@ -31,7 +31,7 @@
 									<small class="text-muted">{{ post.createdDate }}</small>
 								</div>
 							</div>
-							{{ post.body|truncatewords:30 }}
+							{{ post.body|truncatewords:30|safe }}
 							{% if post.author == user %}
 							<div class="mt-3">
 								<a href="{% url 'edit_post' post.id %}" class="btn btn-primary btn-sm" role="button">Edit</a>

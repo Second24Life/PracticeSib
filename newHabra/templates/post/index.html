@@ -20,7 +20,7 @@
                         <small class="text-muted">{{ post.createdDate }}</small>
                     </div>
                 </div>
-                {{ post.body|truncatewords:30 }}
+                {{ post.body|truncatewords:30|safe }}
             </div>
         </div>
     </div>

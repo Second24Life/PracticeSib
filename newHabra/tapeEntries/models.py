@@ -1,12 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from tinymce.models import HTMLField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
     # body = models.TextField(max_length=10000)
-    body = HTMLField()
+    body = RichTextUploadingField(blank=True, default='')
     author = models.ForeignKey(
         User, related_name='posts', null=True, on_delete=models.SET_NULL)
     createdDate = models.DateTimeField(auto_now_add=True)

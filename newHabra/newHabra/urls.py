@@ -1,7 +1,9 @@
 from tapeEntries import views
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from newHabra import settings
 
 """newHabra URL Configuration
 
@@ -31,6 +33,7 @@ urlpatterns = [
     path('post/<int:id>/', views.get_post, name='get_post'),
     path('add_post/', views.add_post, name='add_post'),
     path('edit_post/<int:id>/', views.edit_post, name='edit_post'),
-    path('delete_post/<int:id>/', views.delete_post, name='delete_post')
+    path('delete_post/<int:id>/', views.delete_post, name='delete_post'),
+    path('creditor/', include('ckeditor_uploader.urls'))
     # path('captcha/', include('captcha.urls'))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

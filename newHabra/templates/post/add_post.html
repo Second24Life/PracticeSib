@@ -5,6 +5,7 @@
 {% block content %}
 <form method="post" novalidate>
 	{% csrf_token %}
+	{{ form.media }}
 	{{ form.as_p }}
 	<button type="submit" class="btn btn-primary btn-block">Create post</button>
 </form>

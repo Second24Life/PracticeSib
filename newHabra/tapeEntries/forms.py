@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Post
-# from captcha.fields import CaptchaField
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -37,11 +36,3 @@ class EditPostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'body']
-
-
-# class CaptchaForm(forms.ModelForm):
-#     captcha = CaptchaField()
-
-#     class Meta:
-#         model = User
-#         fields = ('username', 'password')
