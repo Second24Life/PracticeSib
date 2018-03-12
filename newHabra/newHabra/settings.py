@@ -22,6 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'a51y8#5vshdaim58r2o(4gkf-eiup5vwtl(42j7=cd)b+7swqn'
+GOOGLE_RECAPTCHA_SECRET_KEY = '6Lfw60sUAAAAAN1DYj1cu68RzXDmkllnwCyIBaXe'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tapeEntries'
+    'tapeEntries',
+    'tinymce',
+    'captcha'
 ]
 
 MIDDLEWARE = [

@@ -24,11 +24,13 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', views.index, name='index'),
     path('profile/<int:id>/', views.profile, name='profile'),
-    #path('auth/', views.auth, name='auth'),
-    path('auth/', auth_views.LoginView.as_view(template_name='user/auth.html'), name='auth'),
+    path('auth/', views.auth, name='auth'),
+    # path('auth/', auth_views.LoginView.as_view(template_name='user/auth.html'), name='auth'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
     path('post/<int:id>/', views.get_post, name='get_post'),
     path('add_post/', views.add_post, name='add_post'),
-    path('edit_post/<int:id>/', views.edit_post, name='edit_post')
+    path('edit_post/<int:id>/', views.edit_post, name='edit_post'),
+    path('delete_post/<int:id>/', views.delete_post, name='delete_post')
+    # path('captcha/', include('captcha.urls'))
 ]

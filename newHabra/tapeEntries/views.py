@@ -1,11 +1,14 @@
-from django.http import HttpResponse, HttpResponsePermanentRedirect
-from django.shortcuts import get_object_or_404, redirect, render
-from .models import Post
-from .forms import UserRegistrationForm, AddPostForm  # , LoginForm
-# from django.contrib.auth import logout, authenticate, login,
+import json
+import urllib
+from django.http import HttpResponsePermanentRedirect  # , HttpResponse
+from django.shortcuts import get_object_or_404, render  # , redirect
+from django.conf import settings
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .models import Post
+from .forms import UserRegistrationForm, AddPostForm, EditPostForm, LoginForm
 
 
 def index(request):
@@ -26,8 +29,8 @@ def index(request):
 
 @login_required
 def profile(request, id):
-    user = get_object_or_404(User, pk=id)
-    queryset = user.posts.order_by('-createdDate')
+    author = get_object_or_404(User, pk=id)
+    queryset = author.posts.order_by('-createdDate')
     page = request.GET.get('page', 1)
 
     paginator = Paginator(queryset, 20)
@@ -39,46 +42,71 @@ def profile(request, id):
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
 
-    return render(request, 'user/profile.html', {'user': user, 'posts': posts})
-
-
-# def auth(request):
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             cd = form.cleaned_data
-#             user = authenticate(
-#                 username=cd['username'], password=cd['password'])
-
-#             if user is not None:
-#                 login(request, user)
-#                 return HttpResponsePermanentRedirect('/')
-#             else:
-#                 return HttpResponse('Invalid login')
-#     else:
-#         form = LoginForm()
-
-#     return render(request, "user/auth.html", {'form': form})
-
-
-# def logout(request):
-#     logout(request)
-#     return HttpResponsePermanentRedirect('auth/')
+    return render(request, 'user/profile.html', {'user': request.user,
+                                                 'author': author,
+                                                 'posts': posts})
 
 
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            new_user = form.save(commit=False)
-            new_user.set_password(form.cleaned_data['password'])
-            new_user.save()
+            recaptcha_response = request.POST.get('g-recaptcha-response')
+            url = 'https://www.google.com/recaptcha/api/siteverify'
+            values = {
+                'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+                'response': recaptcha_response
+            }
+            data = urllib.parse.urlencode(values).encode()
+            req = urllib.request.Request(url, data=data)
+            response = urllib.request.urlopen(req)
+            result = json.loads(response.read().decode())
 
-            return HttpResponsePermanentRedirect('/auth/')
+            if result['success']:
+                new_user = form.save(commit=False)
+                new_user.set_password(form.cleaned_data['password'])
+                new_user.save()
+
+                return HttpResponsePermanentRedirect('/auth/')
+            else:
+                return render(request, "user/register.html", {'form': form})
+
     else:
         form = UserRegistrationForm()
 
     return render(request, "user/register.html", {'form': form})
+
+
+def auth(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(
+                username=cd['username'], password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    recaptcha_response = request.POST.get(
+                        'g-recaptcha-response')
+                    url = 'https://www.google.com/recaptcha/api/siteverify'
+                    values = {
+                        'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+                        'response': recaptcha_response
+                    }
+                    data = urllib.parse.urlencode(values).encode()
+                    req = urllib.request.Request(url, data=data)
+                    response = urllib.request.urlopen(req)
+                    result = json.loads(response.read().decode())
+
+                    if result['success']:
+                        login(request, user)
+                        return HttpResponsePermanentRedirect('/')
+                    else:
+                        return render(request, "user/auth.html",
+                                      {'form': form})
+    else:
+        form = LoginForm()
+    return render(request, 'user/auth.html', {'form': form})
 
 
 @login_required
@@ -103,4 +131,23 @@ def add_post(request):
 
 @login_required
 def edit_post(request, id):
-    return HttpResponse("<h2>Edit_post {}</h2>".format(id))
+    post = get_object_or_404(Post, pk=id)
+    if request.method == 'POST':
+        form = EditPostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return render(request, 'post/post.html', {'post': post})
+    else:
+        form = EditPostForm(instance=post)
+    return render(request, 'post/edit_post.html', {'form': form})
+
+
+@login_required
+def delete_post(request, id):
+    post = get_object_or_404(Post, pk=id)
+    author_id = post.author.id
+    post.delete()
+
+    return HttpResponsePermanentRedirect('/profile/{}/'.format(author_id))

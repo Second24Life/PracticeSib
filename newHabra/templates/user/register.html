@@ -11,6 +11,7 @@
         <form method="post" novalidate>
           {% csrf_token %}
           {{ form.as_p }}
+          <div class="g-recaptcha" data-sitekey="6Lfw60sUAAAAAEObYs2e9ttSjX6EhXPDW6bCdN6F"></div>
           <button type="submit" class="btn btn-primary btn-block">Create an account</button>
         </form>
       </div>
