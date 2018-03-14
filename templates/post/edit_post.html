@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-2"></div>
+	<div class="col-8">
+		<form method="post" novalidate>
+			{% csrf_token %}
+			{{ form.media }}
+			{{ form.as_p }}
+			<button type="submit" class="btn btn-primary btn-lg">Edit post</button>
+		</form>
+	</div>
+	<div class="col-2"></div>
+</div>
+
+{% endblock content %}
