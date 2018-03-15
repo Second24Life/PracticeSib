@@ -6,9 +6,10 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Post
-from .forms import UserRegistrationForm, AddPostForm, EditPostForm, LoginForm
+from .forms import AddEditPostForm, LoginForm
 
 
 def index(request):
@@ -49,7 +50,7 @@ def profile(request, id):
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             recaptcha_response = request.POST.get('g-recaptcha-response')
             url = 'https://www.google.com/recaptcha/api/siteverify'
@@ -64,7 +65,7 @@ def register(request):
 
             if result['success']:
                 new_user = form.save(commit=False)
-                new_user.set_password(form.cleaned_data['password'])
+                new_user.set_password(form.cleaned_data['password1'])
                 new_user.save()
 
                 return HttpResponsePermanentRedirect('/auth/')
@@ -72,7 +73,7 @@ def register(request):
                 return render(request, "user/register.html", {'form': form})
 
     else:
-        form = UserRegistrationForm()
+        form = UserCreationForm()
 
     return render(request, "user/register.html", {'form': form})
 
@@ -118,14 +119,14 @@ def get_post(request, id):
 @login_required
 def add_post(request):
     if request.method == 'POST':
-        form = AddPostForm(request.POST)
+        form = AddEditPostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
             return render(request, 'post/post.html', {'post': post})
     else:
-        form = AddPostForm()
+        form = AddEditPostForm()
     return render(request, 'post/add_post.html', {'form': form})
 
 
@@ -133,14 +134,14 @@ def add_post(request):
 def edit_post(request, id):
     post = get_object_or_404(Post, pk=id)
     if request.method == 'POST':
-        form = EditPostForm(request.POST, instance=post)
+        form = AddEditPostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
             return render(request, 'post/post.html', {'post': post})
     else:
-        form = EditPostForm(instance=post)
+        form = AddEditPostForm(instance=post)
     return render(request, 'post/edit_post.html', {'form': form})
 
 

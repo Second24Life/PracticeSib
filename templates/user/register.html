@@ -10,8 +10,8 @@
         <h3 class="card-title">Sign up</h3>
         <form method="post" novalidate>
           {% csrf_token %}
-          {{ form.as_p }}
-          <div class="g-recaptcha" data-sitekey="6Lfw60sUAAAAAEObYs2e9ttSjX6EhXPDW6bCdN6F"></div>
+          {% include 'includes/form.html' %}
+          <div class="g-recaptcha" data-sitekey="6Lfw60sUAAAAAEObYs2e9ttSjX6EhXPDW6bCdN6F"></div><br>
           <button type="submit" class="btn btn-primary btn-block">Create an account</button>
         </form>
       </div>

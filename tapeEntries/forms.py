@@ -1,22 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
 from .models import Post
-
-
-class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(
-        label='Repeat password', widget=forms.PasswordInput)
-
-    class Meta:
-        model = User
-        fields = ('username',)
-
-    def clean_password2(self):
-        cd = self.cleaned_data
-        if cd['password'] != cd['password2']:
-            raise forms.ValidationError('Password don\'t match')
-        return cd['password2']
 
 
 class LoginForm(forms.Form):
@@ -24,14 +7,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-class AddPostForm(forms.ModelForm):
-
-    class Meta:
-        model = Post
-        fields = ['title', 'body']
-
-
-class EditPostForm(forms.ModelForm):
+class AddEditPostForm(forms.ModelForm):
 
     class Meta:
         model = Post
