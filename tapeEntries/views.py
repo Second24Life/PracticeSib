@@ -1,5 +1,5 @@
 import json
-import urllib
+import urllib.request
 from django.http import HttpResponsePermanentRedirect  # , HttpResponse
 from django.shortcuts import get_object_or_404, render  # , redirect
 from django.conf import settings
