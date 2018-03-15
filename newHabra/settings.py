@@ -40,10 +40,10 @@ GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY',
                                              '6Lfw60sUAAAAAN1DYj1cu68RzXDmkllnwCyIBaXe')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 # DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = ['newhabra-practicesib.herokuapp.com', ]
+ALLOWED_HOSTS = ['*', ]
 
 
 # Application definition

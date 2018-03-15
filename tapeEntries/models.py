@@ -5,7 +5,6 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
-    # body = models.TextField(max_length=10000)
     body = RichTextUploadingField(blank=True, default='')
     author = models.ForeignKey(
         User, related_name='posts', null=True, on_delete=models.SET_NULL)
